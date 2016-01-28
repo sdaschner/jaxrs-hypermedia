@@ -1,0 +1,128 @@
+= Simple resource links
+Sebastian Daschner
+
+Following example shows a simpler concept of how to link resource via content links.
+
+The idea is to provide content links to related resources, e.g. _add to cart_ action which enabled the client to navigate between resources.
+The client however needs to know the specific HTTP methods, types and properties in order to make the calls.
+
+== Examples
+
+`GET /books`:
+
+----
+[
+    {
+        "name": "Effective Java",
+        "author": "Joshua Bloch",
+        "_links": {
+            "self": "http://api.jamazon.example.com/books/1234"
+        }
+    },
+    {
+        // another book
+    }
+]
+----
+
+`GET /books/1234`:
+
+----
+{
+    "isbn": "1-1234-5678",
+    "name": "Effective Java",
+    "author": "Joshua Bloch",
+    "availability": "IN_STOCK",
+    "price": 29.99,
+    "_links": {
+        "self": "http://api.jamazon.example.com/books/1234",
+        // server logic: only available if availability = IN_STOCK
+        "add-to-cart": "http://api.jamazon.example.com/shopping_cart"
+    }
+}
+----
+
+`POST /shopping_cart` with body:
+
+----
+{
+    "isbn": "1-1234-5678",
+    "quantity": 2
+}
+----
+
+*Response*: `204 No Content`
+
+{nbsp} + 
+
+`GET /shopping_cart`
+
+----
+{
+    "price": 59.98,
+    "selections": [
+        {
+            "quantity": 2,
+            "price": 59.98,
+            "book": {
+                "isbn": "1-1234-5678",
+                "name": "Effective Java",
+                "price": 29.99,
+                "_links": {
+                    "self": "http://api.jamazon.example.com/books/1234"
+                }
+            },
+            "_links": {
+                "modify-selection": "http://api.jamazon.example.com/shopping_cart/123456"
+            }
+        },
+        // other book selections on the shopping cart
+    ],
+    "_links": {
+        "checkout": "http://api.jamazon.example.com/orders"
+    }
+}
+----
+
+`GET /orders`:
+
+----
+[
+    {
+        "date": "2016-01-01T14:00:00Z",
+        "price": 59.98,
+        "status": "SHIPPED",
+        "_links": {
+            "self": "http://api.jamazon.example.com/orders/12345"
+        }
+    },
+    // another order
+}
+----
+
+`GET order/12345`:
+
+----
+{
+    "date": "2016-01-01T14:00:00Z",
+    "price": 59.98,
+    "status": "SHIPPED",
+    "selections" : [
+        {
+            "quantity": 2,
+            "price": 59.98,
+            "book": {
+                "isbn": "1-1234-5678",
+                "name": "Effective Java",
+                "price": 29.99,
+                "_links": {
+                    "self": "http://api.jamazon.example.com/books/1234"
+                }
+            }
+        },
+        {
+            // another book selection
+        }
+    ],
+}
+----

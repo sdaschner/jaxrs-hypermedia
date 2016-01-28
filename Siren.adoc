@@ -1,0 +1,231 @@
+= Siren
+Sebastian Daschner
+
+Following example shows `application/vnd.siren+json`:
+
+// shortcoming of Siren, no nested content in templates
+
+== Examples
+
+Examples to demonstrate possible responses which are followed in a self-exploratory fashion.
+
+`GET /`:
+
+----
+{
+    "links": [
+        { "rel": [ "books" ], "href": "http://api.jamazon.example.com/books" },
+        { "rel": [ "shopping-cart" ], "href": "http://api.jamazon.example.com/shopping_cart" },
+        { "rel": [ "orders" ], "href": "http://api.jamazon.example.com/orders" }
+    ]
+}
+----
+
+`GET /books`:
+
+----
+{
+    "class": [ "books" ],
+    "entities" : [
+        {
+            "class": [ "book" ],
+            "rel": [ "item" ], 
+            "properties": {
+                "name": "Effective Java",
+                "author": "Joshua Bloch"
+            },
+            "links": [
+                { "rel": [ "self" ], "href": "http://api.jamazon.example.com/books/1234" }
+            ]
+        },
+        {
+            // another book
+        }
+    ],
+    "links": [
+        { "rel": [ "self" ], "href": "http://api.jamazon.example.com/books" }
+    ]
+}
+----
+
+`GET /books/1234`:
+
+----
+{
+    "class": [ "book" ],
+    "properties": {
+        "isbn": "1-1234-5678",
+        "name": "Effective Java",
+        "author": "Joshua Bloch",
+        "availability": "IN_STOCK",
+        "price": 29.99
+    }
+    // server logic: only available if availability = IN_STOCK
+    "actions": [
+        {
+            "name": "add-to-cart",
+            "title": "Add Book to cart",
+            "method": "POST",
+            "href": "http://api.jamazon.example.com/shopping_cart",
+            "type": "application/json",
+            "fields": [
+                { "name": "isbn", "type": "text" },
+                { "name": "quantity", "type": "number" }
+            ]
+        }
+    ],
+    "links": [
+        { "rel": [ "self" ], "href": "http://api.jamazon.example.com/books/1234" }
+    ]
+}
+----
+
+`POST /shopping_cart` with body:
+
+----
+{
+    "isbn": "1-1234-5678",
+    "quantity": 2
+}
+----
+
+*Response*: `204 No Content`
+
+{nbsp} + 
+
+`GET /shopping_cart`
+
+----
+{
+    "class": [ "shopping_cart" ],
+    "properties": {
+        "price": 59.98
+    },
+    "entities": [
+        {
+            "class": [ "book-selection" ],
+            "rel": [ "item" ], 
+            "properties": { 
+                "quantity": 2,
+                "price": 59.98
+            },
+            "entities": [
+                {
+                    "class": [ "book" ],
+                    "rel": [ "item" ], 
+                    "properties": {
+                        "isbn": "1-1234-5678",
+                        "name": "Effective Java",
+                        "price": 29.99
+                    },
+                    "links": [
+                        { "rel": [ "self" ], "href": "http://api.jamazon.example.com/books/1234" }
+                    ]
+                }
+            ],
+            "actions": [
+                {
+                    "name": "modify-book-selection",
+                    "title": "Modify book cart selection",
+                    "method": "PUT",
+                    "href": "http://api.jamazon.example.com/shopping_cart/123456",
+                    "type": "application/json",
+                    "fields": [
+                        { "name": "quantity", "type": "number" }
+                    ]
+                },
+                {
+                    "name": "delete-book-selection",
+                    "title": "Delete book cart selection",
+                    "method": "DELETE",
+                    "href": "http://api.jamazon.example.com/shopping_cart/123456"
+                }
+            ],
+            "links": [
+                { "rel": [ "self" ], "href": "http://api.jamazon.example.com/shopping_cart/123456" }
+            ]
+        },
+        // other book selections on the shopping cart
+    ],
+    "actions": [
+        {
+            "name": "checkout",
+            "title": "Checkout shopping cart",
+            "method": "POST",
+            "href": "http://api.jamazon.example.com/orders"
+        }
+    ]
+}
+----
+
+`GET /orders`:
+
+----
+{
+    "class": [ "orders" ],
+    "entities": [
+        {
+            "class": [ "order" ],
+            "rel": [ "item" ], 
+            "properties": { 
+                "date": "2016-01-01T14:00:00Z",
+                "price": 59.98,
+                "status": "SHIPPED"
+            },
+            "links": [
+                { "rel": [ "self" ], "href": "http://api.jamazon.example.com/orders/12345" }
+            ]
+        },
+        // another order
+    ],
+    "links": [
+        { "rel": [ "self" ], "href": "http://api.jamazon.example.com/orders" }
+    ]
+}
+----
+
+`GET order/12345`:
+
+----
+{
+    "class": [ "order" ],
+    "entities" : [
+        {
+            "class": [ "book-selection" ],
+            "rel": [ "item" ], 
+            "properties": { 
+                "quantity": 2,
+                "price": 59.98
+            },
+            "entities": [
+                {
+                    "class": [ "book" ],
+                    "rel": [ "item" ], 
+                    "properties": {
+                        "isbn": "1-1234-5678",
+                        "name": "Effective Java",
+                        "price": 29.99
+                    },
+                    "links": [
+                        { "rel": [ "self" ], "href": "http://api.jamazon.example.com/books/1234" }
+                    ]
+                }
+            ],
+            "links": [
+                { "rel": [ "self" ], "href": "http://api.jamazon.example.com/books/1234" }
+            ]
+        },
+        {
+            // another book selection
+        }
+    ],
+    "properties": {
+        "date": "2016-01-01T14:00:00Z",
+        "price": 59.98,
+        "status": "SHIPPED"
+    }
+    "links": [
+        { "rel": [ "self" ], "href": "http://api.jamazon.example.com/orders/12345" }
+    ]
+}
+----
