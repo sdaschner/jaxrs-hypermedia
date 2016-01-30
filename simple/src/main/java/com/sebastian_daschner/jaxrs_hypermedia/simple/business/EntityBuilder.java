@@ -5,27 +5,30 @@ import com.sebastian_daschner.jaxrs_hypermedia.simple.business.cart.entity.BookS
 import com.sebastian_daschner.jaxrs_hypermedia.simple.business.cart.entity.ShoppingCart;
 import com.sebastian_daschner.jaxrs_hypermedia.simple.business.orders.entity.Order;
 
+import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import java.net.URL;
 
 import static javax.json.Json.createObjectBuilder;
 
 public class EntityBuilder {
 
-    public JsonObject buildBookTeaser(Book book, URL self) {
+    @Inject
+    ResourceUriBuilder uriBuilder;
+
+    public JsonObject buildBookTeaser(Book book) {
         final JsonObjectBuilder builder = createObjectBuilder();
 
         builder.add("name", book.getName());
         builder.add("author", book.getAuthor());
-        builder.add("_links", createObjectBuilder().add("self", self.toString()));
+        builder.add("_links", createObjectBuilder().add("self", uriBuilder.forBook(book).toString()));
 
         return builder.build();
     }
 
-    public JsonObject buildBook(Book book, URL self, URL addToCart) {
+    public JsonObject buildBook(Book book, boolean addToCartAllowed) {
         final JsonObjectBuilder builder = createObjectBuilder();
 
         builder.add("isbn", book.getIsbn());
@@ -35,59 +38,58 @@ public class EntityBuilder {
         builder.add("price", book.getPrice());
 
         final JsonObjectBuilder linkBuilder = createObjectBuilder();
-        linkBuilder.add("self", self.toString());
-        if (addToCart != null)
-            linkBuilder.add("add-to-cart", addToCart.toString());
+        linkBuilder.add("self", uriBuilder.forBook(book).toString());
+        if (addToCartAllowed)
+            linkBuilder.add("add-to-cart", uriBuilder.forShoppingCart().toString());
 
         builder.add("_links", linkBuilder);
 
         return builder.build();
     }
 
-    public JsonObject buildShoppingCart(ShoppingCart cart, JsonArray selections, URL checkout) {
+    public JsonObject buildShoppingCart(ShoppingCart cart, JsonArray selections) {
 
         return Json.createObjectBuilder()
                 .add("price", cart.getPrice())
                 .add("selections", selections)
-                .add("_links", createObjectBuilder().add("checkout", checkout.toString()))
+                .add("_links", createObjectBuilder().add("checkout", uriBuilder.forCheckout().toString()))
                 .build();
     }
 
-    public JsonObject buildBookSelection(BookSelection bookSelection, URL selection, URL book) {
-        return Json.createObjectBuilder()
+    public JsonObject buildBookSelection(BookSelection bookSelection) {
+        return buildBookSelection(bookSelection, false);
+    }
+
+    public JsonObject buildBookSelection(BookSelection bookSelection, boolean modificationAllowed) {
+        final JsonObjectBuilder builder = Json.createObjectBuilder()
                 .add("quantity", bookSelection.getQuantity())
                 .add("price", bookSelection.getPrice())
-                .add("book", buildBookSelectionBook(bookSelection.getBook(), book))
-                .add("_links", createObjectBuilder().add("modify-selection", selection.toString()))
-                .build();
+                .add("book", buildBookSelectionBook(bookSelection.getBook()));
+
+        if (modificationAllowed)
+            builder.add("_links", createObjectBuilder().add("modify-selection", uriBuilder.forBookSelection(bookSelection).toString()));
+
+        return builder.build();
     }
 
-    public JsonObject buildBookSelection(BookSelection bookSelection, URL book) {
-        return Json.createObjectBuilder()
-                .add("quantity", bookSelection.getQuantity())
-                .add("price", bookSelection.getPrice())
-                .add("book", buildBookSelectionBook(bookSelection.getBook(), book))
-                .build();
-    }
-
-    private static JsonObject buildBookSelectionBook(Book book, URL self) {
+    private JsonObject buildBookSelectionBook(Book book) {
         final JsonObjectBuilder builder = createObjectBuilder();
 
         builder.add("isbn", book.getIsbn());
         builder.add("name", book.getName());
         builder.add("price", book.getPrice());
-        builder.add("_links", createObjectBuilder().add("self", self.toString()));
+        builder.add("_links", createObjectBuilder().add("self", uriBuilder.forBook(book).toString()));
 
         return builder.build();
     }
 
-    public JsonObject buildOrderTeaser(Order order, URL self) {
+    public JsonObject buildOrderTeaser(Order order) {
         final JsonObjectBuilder builder = Json.createObjectBuilder();
 
         builder.add("date", order.getDate().toString());
         builder.add("price", order.getPrice());
         builder.add("status", order.getStatus().name());
-        builder.add("_links", Json.createObjectBuilder().add("self", self.toString()));
+        builder.add("_links", Json.createObjectBuilder().add("self", uriBuilder.forOrder(order).toString()));
 
         return builder.build();
     }
@@ -100,4 +102,5 @@ public class EntityBuilder {
                 .add("selections", selections)
                 .build();
     }
+
 }
