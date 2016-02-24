@@ -1,7 +1,7 @@
 package com.sebastian_daschner.jaxrs_hypermedia.simple.business.orders.boundary;
 
 import com.sebastian_daschner.jaxrs_hypermedia.simple.business.EntityBuilder;
-import com.sebastian_daschner.jaxrs_hypermedia.simple.business.UrlBuilder;
+import com.sebastian_daschner.jaxrs_hypermedia.simple.business.ResourceUriBuilder;
 import com.sebastian_daschner.jaxrs_hypermedia.simple.business.orders.entity.Order;
 
 import javax.ejb.Stateless;
@@ -30,7 +30,7 @@ public class OrdersResource {
     EntityBuilder entityBuilder;
 
     @Inject
-    UrlBuilder urlBuilder;
+    ResourceUriBuilder resourceUriBuilder;
 
     @Context
     UriInfo uriInfo;
@@ -38,7 +38,7 @@ public class OrdersResource {
     @GET
     public JsonArray getOrders() {
         return orderStore.getOrders().stream()
-                .map(o -> entityBuilder.buildOrderTeaser(o, urlBuilder.forOrder(o, uriInfo)))
+                .map(o -> entityBuilder.buildOrderTeaser(o, resourceUriBuilder.forOrder(o, uriInfo)))
                 .collect(Json::createArrayBuilder, JsonArrayBuilder::add, JsonArrayBuilder::add)
                 .build();
     }
@@ -49,7 +49,7 @@ public class OrdersResource {
         final Order order = orderStore.getOrder(id);
 
         JsonArray bookSelections = order.getSelections().stream()
-                .map(b -> entityBuilder.buildBookSelection(b, urlBuilder.forBook(b.getBook(), uriInfo)))
+                .map(b -> entityBuilder.buildBookSelection(b, resourceUriBuilder.forBook(b.getBook(), uriInfo)))
                 .collect(Json::createArrayBuilder, JsonArrayBuilder::add, JsonArrayBuilder::add)
                 .build();
 

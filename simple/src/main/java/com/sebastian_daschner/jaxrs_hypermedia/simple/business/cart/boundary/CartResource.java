@@ -1,7 +1,7 @@
 package com.sebastian_daschner.jaxrs_hypermedia.simple.business.cart.boundary;
 
 import com.sebastian_daschner.jaxrs_hypermedia.simple.business.EntityBuilder;
-import com.sebastian_daschner.jaxrs_hypermedia.simple.business.UrlBuilder;
+import com.sebastian_daschner.jaxrs_hypermedia.simple.business.ResourceUriBuilder;
 import com.sebastian_daschner.jaxrs_hypermedia.simple.business.cart.entity.BookSelection;
 import com.sebastian_daschner.jaxrs_hypermedia.simple.business.cart.entity.Selection;
 import com.sebastian_daschner.jaxrs_hypermedia.simple.business.cart.entity.ShoppingCart;
@@ -31,7 +31,7 @@ public class CartResource {
     EntityBuilder entityBuilder;
 
     @Inject
-    UrlBuilder urlBuilder;
+    ResourceUriBuilder resourceUriBuilder;
 
     @Context
     UriInfo uriInfo;
@@ -41,11 +41,11 @@ public class CartResource {
         final ShoppingCart cart = shoppingCart.getShoppingCart();
 
         JsonArray bookSelections = cart.getSelections().stream()
-                .map(b -> entityBuilder.buildBookSelection(b, urlBuilder.forBookSelection(b, uriInfo), urlBuilder.forBook(b.getBook(), uriInfo)))
+                .map(b -> entityBuilder.buildBookSelection(b, resourceUriBuilder.forBookSelection(b, uriInfo), resourceUriBuilder.forBook(b.getBook(), uriInfo)))
                 .collect(Json::createArrayBuilder, JsonArrayBuilder::add, JsonArrayBuilder::add)
                 .build();
 
-        return entityBuilder.buildShoppingCart(cart, bookSelections, urlBuilder.forCheckout(uriInfo));
+        return entityBuilder.buildShoppingCart(cart, bookSelections, resourceUriBuilder.forCheckout(uriInfo));
     }
 
     @POST

@@ -9,13 +9,13 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import java.net.URL;
+import java.net.URI;
 
 import static javax.json.Json.createObjectBuilder;
 
 public class EntityBuilder {
 
-    public JsonObject buildBookTeaser(Book book, URL self) {
+    public JsonObject buildBookTeaser(Book book, URI self) {
         final JsonObjectBuilder builder = createObjectBuilder();
 
         builder.add("name", book.getName());
@@ -25,7 +25,7 @@ public class EntityBuilder {
         return builder.build();
     }
 
-    public JsonObject buildBook(Book book, URL self, URL addToCart) {
+    public JsonObject buildBook(Book book, URI self, URI addToCart) {
         final JsonObjectBuilder builder = createObjectBuilder();
 
         builder.add("isbn", book.getIsbn());
@@ -44,7 +44,7 @@ public class EntityBuilder {
         return builder.build();
     }
 
-    public JsonObject buildShoppingCart(ShoppingCart cart, JsonArray selections, URL checkout) {
+    public JsonObject buildShoppingCart(ShoppingCart cart, JsonArray selections, URI checkout) {
 
         return Json.createObjectBuilder()
                 .add("price", cart.getPrice())
@@ -53,7 +53,7 @@ public class EntityBuilder {
                 .build();
     }
 
-    public JsonObject buildBookSelection(BookSelection bookSelection, URL selection, URL book) {
+    public JsonObject buildBookSelection(BookSelection bookSelection, URI selection, URI book) {
         return Json.createObjectBuilder()
                 .add("quantity", bookSelection.getQuantity())
                 .add("price", bookSelection.getPrice())
@@ -62,7 +62,7 @@ public class EntityBuilder {
                 .build();
     }
 
-    public JsonObject buildBookSelection(BookSelection bookSelection, URL book) {
+    public JsonObject buildBookSelection(BookSelection bookSelection, URI book) {
         return Json.createObjectBuilder()
                 .add("quantity", bookSelection.getQuantity())
                 .add("price", bookSelection.getPrice())
@@ -70,7 +70,7 @@ public class EntityBuilder {
                 .build();
     }
 
-    private static JsonObject buildBookSelectionBook(Book book, URL self) {
+    private static JsonObject buildBookSelectionBook(Book book, URI self) {
         final JsonObjectBuilder builder = createObjectBuilder();
 
         builder.add("isbn", book.getIsbn());
@@ -81,7 +81,7 @@ public class EntityBuilder {
         return builder.build();
     }
 
-    public JsonObject buildOrderTeaser(Order order, URL self) {
+    public JsonObject buildOrderTeaser(Order order, URI self) {
         final JsonObjectBuilder builder = Json.createObjectBuilder();
 
         builder.add("date", order.getDate().toString());

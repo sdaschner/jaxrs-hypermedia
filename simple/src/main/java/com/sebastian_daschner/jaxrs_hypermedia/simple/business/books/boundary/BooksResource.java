@@ -1,7 +1,7 @@
 package com.sebastian_daschner.jaxrs_hypermedia.simple.business.books.boundary;
 
 import com.sebastian_daschner.jaxrs_hypermedia.simple.business.EntityBuilder;
-import com.sebastian_daschner.jaxrs_hypermedia.simple.business.UrlBuilder;
+import com.sebastian_daschner.jaxrs_hypermedia.simple.business.ResourceUriBuilder;
 import com.sebastian_daschner.jaxrs_hypermedia.simple.business.books.entity.Book;
 
 import javax.ejb.Stateless;
@@ -17,7 +17,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
-import java.net.URL;
+import java.net.URI;
 
 @Stateless
 @Path("books")
@@ -31,7 +31,7 @@ public class BooksResource {
     EntityBuilder entityBuilder;
 
     @Inject
-    UrlBuilder urlBuilder;
+    ResourceUriBuilder resourceUriBuilder;
 
     @Context
     UriInfo uriInfo;
@@ -39,7 +39,7 @@ public class BooksResource {
     @GET
     public JsonArray getBooks() {
         return bookStore.getBooks().stream()
-                .map(b -> entityBuilder.buildBookTeaser(b, urlBuilder.forBook(b, uriInfo)))
+                .map(b -> entityBuilder.buildBookTeaser(b, resourceUriBuilder.forBook(b, uriInfo)))
                 .collect(Json::createArrayBuilder, JsonArrayBuilder::add, JsonArrayBuilder::add)
                 .build();
     }
@@ -49,11 +49,11 @@ public class BooksResource {
     public JsonObject getBook(@PathParam("id") long id) {
         final Book book = bookStore.getBook(id);
 
-        URL addToCart = null;
+        URI addToCart = null;
         if (bookStore.isAddToCartAllowed(book))
-            addToCart = urlBuilder.forShoppingCart(uriInfo);
+            addToCart = resourceUriBuilder.forShoppingCart(uriInfo);
 
-        return entityBuilder.buildBook(book, urlBuilder.forBook(book, uriInfo), addToCart);
+        return entityBuilder.buildBook(book, resourceUriBuilder.forBook(book, uriInfo), addToCart);
     }
 
 }
