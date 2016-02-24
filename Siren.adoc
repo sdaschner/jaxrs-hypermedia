@@ -97,7 +97,7 @@ Examples to demonstrate possible responses which are followed in a self-explorat
 
 ----
 {
-    "class": [ "shopping_cart" ],
+    "class": [ "shopping-cart" ],
     "properties": {
         "price": 59.98
     },
@@ -140,9 +140,6 @@ Examples to demonstrate possible responses which are followed in a self-explorat
                     "method": "DELETE",
                     "href": "http://api.jamazon.example.com/shopping_cart/123456"
                 }
-            ],
-            "links": [
-                { "rel": [ "self" ], "href": "http://api.jamazon.example.com/shopping_cart/123456" }
             ]
         },
         // other book selections on the shopping cart
@@ -210,9 +207,6 @@ Examples to demonstrate possible responses which are followed in a self-explorat
                         { "rel": [ "self" ], "href": "http://api.jamazon.example.com/books/1234" }
                     ]
                 }
-            ],
-            "links": [
-                { "rel": [ "self" ], "href": "http://api.jamazon.example.com/books/1234" }
             ]
         },
         {
