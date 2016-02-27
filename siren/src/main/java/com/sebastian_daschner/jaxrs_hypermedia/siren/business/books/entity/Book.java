@@ -7,7 +7,7 @@ public class Book {
     private String name;
     private String author;
     private Availability availability;
-    // just an example; money calculations with floating point numbers is a bad idea in practice
+    // just an example; money calculation with floating point numbers is a bad idea in practice
     private double price;
 
     public long getId() {

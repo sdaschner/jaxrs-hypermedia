@@ -1,0 +1,51 @@
+package com.sebastian_daschner.jaxrs_hypermedia.simple_jsonb.business.books.boundary;
+
+import com.sebastian_daschner.jaxrs_hypermedia.simple_jsonb.business.ResourceUriBuilder;
+import com.sebastian_daschner.jaxrs_hypermedia.simple_jsonb.business.books.entity.Book;
+import com.sebastian_daschner.jaxrs_hypermedia.simple_jsonb.business.books.entity.BookTeaser;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
+import java.util.List;
+
+@Stateless
+@Path("books")
+@Produces(MediaType.APPLICATION_JSON)
+public class BooksResource {
+
+    @Inject
+    MockBookStore bookStore;
+
+    @Inject
+    ResourceUriBuilder resourceUriBuilder;
+
+    @Context
+    UriInfo uriInfo;
+
+    @GET
+    public List<BookTeaser> getBooks() {
+        final List<BookTeaser> books = bookStore.getBookTeasers();
+        books.forEach(b -> b.getLinks().put("self", resourceUriBuilder.forBook(b.getId(), uriInfo)));
+        return books;
+    }
+
+    @GET
+    @Path("{id}")
+    public Book getBook(@PathParam("id") long id) {
+        final Book book = bookStore.getBook(id);
+        book.getLinks().put("self", resourceUriBuilder.forBook(book.getId(), uriInfo));
+
+        if (bookStore.isAddToCartAllowed(book))
+            book.getLinks().put("add-to-cart", resourceUriBuilder.forShoppingCart(uriInfo));
+
+        return book;
+    }
+
+}

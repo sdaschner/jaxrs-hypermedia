@@ -1,7 +1,14 @@
-package com.sebastian_daschner.jaxrs_hypermedia.simple.business.books.entity;
+package com.sebastian_daschner.jaxrs_hypermedia.simple_jsonb.business.books.entity;
+
+import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTransient;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Book {
 
+    @JsonbTransient
     private long id;
     private String isbn;
     private String name;
@@ -9,6 +16,8 @@ public class Book {
     private Availability availability;
     // just an example; money calculation with floating point numbers is a bad idea in practice
     private double price;
+    @JsonbProperty("_links")
+    private Map<String, URI> links = new HashMap<>();
 
     public long getId() {
         return id;
@@ -57,4 +66,13 @@ public class Book {
     public void setPrice(double price) {
         this.price = price;
     }
+
+    public Map<String, URI> getLinks() {
+        return links;
+    }
+
+    public void setLinks(Map<String, URI> links) {
+        this.links = links;
+    }
+
 }
