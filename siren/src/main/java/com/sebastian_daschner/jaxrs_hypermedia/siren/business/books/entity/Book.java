@@ -1,8 +1,6 @@
 package com.sebastian_daschner.jaxrs_hypermedia.siren.business.books.entity;
 
-import com.google.code.siren4j.resource.BaseResource;
-
-public class Book extends BaseResource {
+public class Book {
 
     private long id;
     private String isbn;
