@@ -3,7 +3,7 @@ package com.sebastian_daschner.jaxrs_hypermedia.siren.business.books.boundary;
 import com.google.code.siren4j.component.Entity;
 import com.google.code.siren4j.error.Siren4JException;
 import com.sebastian_daschner.jaxrs_hypermedia.siren.business.books.entity.Book;
-import com.sebastian_daschner.jaxrs_hypermedia.siren.business.orders.boundary.EntityBuilder;
+import com.sebastian_daschner.jaxrs_hypermedia.siren.business.EntityBuilder;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;

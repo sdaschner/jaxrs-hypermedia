@@ -15,7 +15,7 @@ import static com.google.code.siren4j.component.builder.LinkBuilder.createLinkBu
 
 public class LinkBuilder {
 
-    public static final String SELF_REL = "self";
+    private static final String SELF_REL = "self";
 
     public Link forBook(Book book, UriInfo uriInfo) {
         return createResourceUri(BooksResource.class, "getBook", book.getId(), uriInfo);

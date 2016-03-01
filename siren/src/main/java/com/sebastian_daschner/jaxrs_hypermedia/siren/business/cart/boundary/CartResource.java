@@ -4,7 +4,7 @@ import com.google.code.siren4j.component.Entity;
 import com.sebastian_daschner.jaxrs_hypermedia.siren.business.cart.entity.BookSelection;
 import com.sebastian_daschner.jaxrs_hypermedia.siren.business.cart.entity.Selection;
 import com.sebastian_daschner.jaxrs_hypermedia.siren.business.cart.entity.ShoppingCart;
-import com.sebastian_daschner.jaxrs_hypermedia.siren.business.orders.boundary.EntityBuilder;
+import com.sebastian_daschner.jaxrs_hypermedia.siren.business.EntityBuilder;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;

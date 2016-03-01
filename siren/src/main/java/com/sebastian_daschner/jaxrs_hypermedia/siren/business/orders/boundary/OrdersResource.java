@@ -2,6 +2,7 @@ package com.sebastian_daschner.jaxrs_hypermedia.siren.business.orders.boundary;
 
 import com.google.code.siren4j.component.Entity;
 import com.google.code.siren4j.error.Siren4JException;
+import com.sebastian_daschner.jaxrs_hypermedia.siren.business.EntityBuilder;
 import com.sebastian_daschner.jaxrs_hypermedia.siren.business.LinkBuilder;
 import com.sebastian_daschner.jaxrs_hypermedia.siren.business.orders.entity.Order;
 

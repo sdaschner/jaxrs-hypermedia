@@ -1,4 +1,4 @@
-package com.sebastian_daschner.jaxrs_hypermedia.siren.business.orders.boundary;
+package com.sebastian_daschner.jaxrs_hypermedia.siren.business;
 
 import com.google.code.siren4j.component.Entity;
 import com.google.code.siren4j.component.impl.ActionImpl;
