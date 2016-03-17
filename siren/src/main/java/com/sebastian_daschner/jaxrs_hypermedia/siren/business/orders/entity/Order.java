@@ -3,6 +3,7 @@ package com.sebastian_daschner.jaxrs_hypermedia.siren.business.orders.entity;
 import com.sebastian_daschner.jaxrs_hypermedia.siren.business.cart.entity.BookSelection;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 public class Order {
@@ -12,7 +13,7 @@ public class Order {
     private OrderStatus status;
     private double price;
 
-    private Set<BookSelection> selections;
+    private Set<BookSelection> selections = new HashSet<>();
 
     public long getId() {
         return id;

@@ -3,7 +3,7 @@ package com.sebastian_daschner.jaxrs_hypermedia.siren.business.cart.boundary;
 import com.google.code.siren4j.component.Entity;
 import com.sebastian_daschner.jaxrs_hypermedia.siren.business.cart.entity.BookSelection;
 import com.sebastian_daschner.jaxrs_hypermedia.siren.business.cart.entity.Selection;
-import com.sebastian_daschner.jaxrs_hypermedia.siren.business.cart.entity.ShoppingCart;
+import com.sebastian_daschner.jaxrs_hypermedia.siren.business.cart.entity.ShoppingCartSelection;
 import com.sebastian_daschner.jaxrs_hypermedia.siren.business.EntityBuilder;
 
 import javax.ejb.Stateless;
@@ -21,7 +21,7 @@ import javax.ws.rs.core.UriInfo;
 public class CartResource {
 
     @Inject
-    MockShoppingCart shoppingCart;
+    ShoppingStore shoppingStore;
 
     @Inject
     EntityBuilder entityBuilder;
@@ -31,25 +31,25 @@ public class CartResource {
 
     @GET
     public Entity getShoppingCart() {
-        final ShoppingCart cart = shoppingCart.getShoppingCart();
+        final ShoppingCartSelection cart = shoppingStore.getShoppingCartSelection();
         return entityBuilder.buildShoppingCart(cart, uriInfo);
     }
 
     @POST
     public void addItem(@Valid @NotNull BookSelection selection) {
-        shoppingCart.addBookSelection(selection);
+        shoppingStore.addBookSelection(selection);
     }
 
     @PUT
     @Path("{id}")
     public void updateSelection(@PathParam("id") long selectionId, @Valid @NotNull Selection selectionUpdate) {
-        shoppingCart.updateBookSelection(selectionId, selectionUpdate.getQuantity());
+        shoppingStore.updateBookSelection(selectionId, selectionUpdate.getQuantity());
     }
 
     @DELETE
     @Path("{id}")
     public void deleteSelection(@PathParam("id") long selectionId) {
-        shoppingCart.updateBookSelection(selectionId, 0);
+        shoppingStore.updateBookSelection(selectionId, 0);
     }
 
 }

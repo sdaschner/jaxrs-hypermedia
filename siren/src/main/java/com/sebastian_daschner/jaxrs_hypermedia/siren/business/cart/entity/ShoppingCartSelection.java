@@ -1,11 +1,12 @@
 package com.sebastian_daschner.jaxrs_hypermedia.siren.business.cart.entity;
 
+import java.util.HashSet;
 import java.util.Set;
 
-public class ShoppingCart {
+public class ShoppingCartSelection {
 
     private double price;
-    private Set<BookSelection> selections;
+    private Set<BookSelection> selections = new HashSet<>();
 
     public double getPrice() {
         return price;

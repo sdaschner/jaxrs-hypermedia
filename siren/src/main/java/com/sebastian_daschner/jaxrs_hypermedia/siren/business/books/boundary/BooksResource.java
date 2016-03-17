@@ -2,15 +2,12 @@ package com.sebastian_daschner.jaxrs_hypermedia.siren.business.books.boundary;
 
 import com.google.code.siren4j.component.Entity;
 import com.google.code.siren4j.error.Siren4JException;
-import com.sebastian_daschner.jaxrs_hypermedia.siren.business.books.entity.Book;
 import com.sebastian_daschner.jaxrs_hypermedia.siren.business.EntityBuilder;
+import com.sebastian_daschner.jaxrs_hypermedia.siren.business.books.entity.Book;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
@@ -25,7 +22,7 @@ public class BooksResource {
     UriInfo uriInfo;
 
     @Inject
-    MockBookStore bookStore;
+    BookStore bookStore;
 
     @Inject
     EntityBuilder entityBuilder;
@@ -40,6 +37,9 @@ public class BooksResource {
     @Path("{id}")
     public Entity getBook(@PathParam("id") long id) throws Siren4JException {
         final Book book = bookStore.getBook(id);
+
+        if (book == null)
+            throw new NotFoundException();
 
         final boolean addToCartActionIncluded = bookStore.isAddToCartAllowed(book);
 

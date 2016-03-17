@@ -8,13 +8,12 @@ import com.sebastian_daschner.jaxrs_hypermedia.siren.business.orders.entity.Orde
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.List;
 
 @Stateless
@@ -23,7 +22,7 @@ import java.util.List;
 public class OrdersResource {
 
     @Inject
-    MockOrderStore orderStore;
+    OrderStore orderStore;
 
     @Inject
     EntityBuilder entityBuilder;
@@ -44,7 +43,15 @@ public class OrdersResource {
     @Path("{id}")
     public Entity getOrder(@PathParam("id") long id) throws Siren4JException {
         final Order order = orderStore.getOrder(id);
+        if (order == null)
+            throw new NotFoundException();
         return entityBuilder.buildOrder(order, uriInfo);
+    }
+
+    @POST
+    public Response checkout() {
+        final Order order = orderStore.checkout();
+        return Response.created(URI.create(linkBuilder.forOrder(order, uriInfo).getHref())).build();
     }
 
 }

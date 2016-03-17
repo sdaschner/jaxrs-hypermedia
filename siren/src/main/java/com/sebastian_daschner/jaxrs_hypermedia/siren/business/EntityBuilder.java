@@ -3,10 +3,9 @@ package com.sebastian_daschner.jaxrs_hypermedia.siren.business;
 import com.google.code.siren4j.component.Entity;
 import com.google.code.siren4j.component.impl.ActionImpl;
 import com.google.code.siren4j.meta.FieldType;
-import com.sebastian_daschner.jaxrs_hypermedia.siren.business.LinkBuilder;
 import com.sebastian_daschner.jaxrs_hypermedia.siren.business.books.entity.Book;
 import com.sebastian_daschner.jaxrs_hypermedia.siren.business.cart.entity.BookSelection;
-import com.sebastian_daschner.jaxrs_hypermedia.siren.business.cart.entity.ShoppingCart;
+import com.sebastian_daschner.jaxrs_hypermedia.siren.business.cart.entity.ShoppingCartSelection;
 import com.sebastian_daschner.jaxrs_hypermedia.siren.business.orders.entity.Order;
 
 import javax.inject.Inject;
@@ -62,7 +61,7 @@ public class EntityBuilder {
         return entityBuilder.build();
     }
 
-    public Entity buildShoppingCart(ShoppingCart cart, UriInfo uriInfo) {
+    public Entity buildShoppingCart(ShoppingCartSelection cart, UriInfo uriInfo) {
         final List<Entity> selections = cart.getSelections().stream().map(s -> buildBookSelection(s, uriInfo, true)).collect(Collectors.toList());
 
         return createEntityBuilder().setComponentClass("shopping-cart")
