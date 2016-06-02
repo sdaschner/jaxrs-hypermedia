@@ -8,3 +8,5 @@ The example show a made up '`Jamazon`' book store in different formats and conce
 link:Simple.adoc[Simple resource links]
 
 link:Siren.adoc[Siren]
+
+For the Siren content type, the easiest solutions to integrate in enterprise projects are shown in https://github.com/sdaschner/jaxrs-hypermedia/tree/master/siren-plain-ee[plain-ee] and https://github.com/sdaschner/jaxrs-hypermedia/tree/master/siren-siren4javaee[siren4javaee].
