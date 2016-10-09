@@ -91,7 +91,7 @@ public class EntityBuilder {
                         .add("name", "checkout")
                         .add("title", "Checkout shopping cart")
                         .add("method", HttpMethod.POST)
-                        .add("href", linkBuilder.forShoppingCart(uriInfo).toString())))
+                        .add("href", linkBuilder.forOrders(uriInfo).toString())))
                 .add("links", createArrayBuilder().add(createLinkObject("self", linkBuilder.forShoppingCart(uriInfo)))).build();
     }
 

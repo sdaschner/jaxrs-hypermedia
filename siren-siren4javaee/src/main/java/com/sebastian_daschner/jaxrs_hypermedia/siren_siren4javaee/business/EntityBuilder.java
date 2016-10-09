@@ -78,7 +78,7 @@ public class EntityBuilder {
                         .setName("checkout")
                         .setTitle("Checkout shopping cart")
                         .setMethod(HttpMethod.POST)
-                        .setHref(linkBuilder.forShoppingCart(uriInfo)))
+                        .setHref(linkBuilder.forOrders(uriInfo)))
                 .addLink(linkBuilder.forShoppingCart(uriInfo), "self");
 
         cart.getSelections().stream().map(s -> buildBookSelection(s, uriInfo, true)).forEach(entityBuilder::addEntity);
