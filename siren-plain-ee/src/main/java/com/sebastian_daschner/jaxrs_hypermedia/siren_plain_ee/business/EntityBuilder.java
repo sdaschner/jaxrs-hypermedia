@@ -81,7 +81,7 @@ public class EntityBuilder {
     }
 
     public JsonObject buildShoppingCart(ShoppingCartSelection cart, UriInfo uriInfo) {
-        final JsonArray selectionEntities = cart.getSelections().stream().map(s -> buildBookSelection(s, uriInfo, true)).collect(Json::createArrayBuilder, JsonArrayBuilder::add, JsonArrayBuilder::add).build();
+        final JsonArray selectionEntities = cart.getSelections().stream().map(s -> buildBookSelection(s, uriInfo, true, true)).collect(Json::createArrayBuilder, JsonArrayBuilder::add, JsonArrayBuilder::add).build();
 
         return createObjectBuilder()
                 .add("class", createArrayBuilder().add("shopping-cart"))
@@ -93,6 +93,10 @@ public class EntityBuilder {
                         .add("method", HttpMethod.POST)
                         .add("href", linkBuilder.forOrders(uriInfo).toString())))
                 .add("links", createArrayBuilder().add(createLinkObject("self", linkBuilder.forShoppingCart(uriInfo)))).build();
+    }
+
+    public JsonObject buildShoppingCartSelection(BookSelection selection, UriInfo uriInfo) {
+        return buildBookSelection(selection, uriInfo, true, false);
     }
 
     public JsonObject buildOrders(List<Order> orders, UriInfo uriInfo) {
@@ -116,7 +120,7 @@ public class EntityBuilder {
     }
 
     public JsonObject buildOrder(Order order, UriInfo uriInfo) {
-        final JsonArray selectionEntities = order.getSelections().stream().map(s -> buildBookSelection(s, uriInfo, false)).collect(Json::createArrayBuilder, JsonArrayBuilder::add, JsonArrayBuilder::add).build();
+        final JsonArray selectionEntities = order.getSelections().stream().map(s -> buildBookSelection(s, uriInfo, false, true)).collect(Json::createArrayBuilder, JsonArrayBuilder::add, JsonArrayBuilder::add).build();
 
         return createObjectBuilder()
                 .add("class", createArrayBuilder().add("order"))
@@ -128,7 +132,7 @@ public class EntityBuilder {
                 .add("links", createArrayBuilder().add(createLinkObject("self", linkBuilder.forOrder(order, uriInfo)))).build();
     }
 
-    private JsonObject buildBookSelection(BookSelection selection, UriInfo uriInfo, boolean actionsIncluded) {
+    private JsonObject buildBookSelection(BookSelection selection, UriInfo uriInfo, boolean hypertextIncluded, boolean asSubEntity) {
         final Book book = selection.getBook();
         final JsonObject bookJsonObject = createObjectBuilder()
                 .add("class", createArrayBuilder().add("book"))
@@ -141,14 +145,15 @@ public class EntityBuilder {
                 .build();
 
         final JsonObjectBuilder selectionBuilder = createObjectBuilder()
-                .add("class", createArrayBuilder().add("book-selection"))
-                .add("rel", createArrayBuilder().add("item"))
-                .add("properties", createObjectBuilder()
-                        .add("quantity", selection.getQuantity())
-                        .add("price", selection.getPrice()))
+                .add("class", createArrayBuilder().add("book-selection"));
+
+        if (asSubEntity)
+            selectionBuilder.add("rel", createArrayBuilder().add("item"));
+
+        selectionBuilder.add("properties", createObjectBuilder().add("quantity", selection.getQuantity()).add("price", selection.getPrice()))
                 .add("entities", createArrayBuilder().add(bookJsonObject));
 
-        if (actionsIncluded) {
+        if (hypertextIncluded) {
             selectionBuilder.add("actions", createArrayBuilder()
                     .add(createObjectBuilder()
                             .add("name", "modify-book-selection")
@@ -165,7 +170,8 @@ public class EntityBuilder {
                             .add("name", "delete-book-selection")
                             .add("title", "Delete book cart selection")
                             .add("method", HttpMethod.DELETE)
-                            .add("href", linkBuilder.forBookSelection(selection, uriInfo).toString())));
+                            .add("href", linkBuilder.forBookSelection(selection, uriInfo).toString())))
+                    .add("links", createArrayBuilder().add(createLinkObject("self", linkBuilder.forBookSelection(selection, uriInfo))));
         }
 
         return selectionBuilder.build();
@@ -174,5 +180,4 @@ public class EntityBuilder {
     private JsonObject createLinkObject(String relation, URI uri) {
         return createObjectBuilder().add("rel", createArrayBuilder().add(relation)).add("href", uri.toString()).build();
     }
-
 }

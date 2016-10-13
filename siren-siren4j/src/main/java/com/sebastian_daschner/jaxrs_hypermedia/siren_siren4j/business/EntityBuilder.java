@@ -62,7 +62,7 @@ public class EntityBuilder {
     }
 
     public Entity buildShoppingCart(ShoppingCartSelection cart, UriInfo uriInfo) {
-        final List<Entity> selections = cart.getSelections().stream().map(s -> buildBookSelection(s, uriInfo, true)).collect(Collectors.toList());
+        final List<Entity> selections = cart.getSelections().stream().map(s -> buildBookSelection(s, uriInfo, true, true)).collect(Collectors.toList());
 
         return createEntityBuilder().setComponentClass("shopping-cart")
                 .addProperty("price", cart.getPrice())
@@ -73,6 +73,10 @@ public class EntityBuilder {
                         .setHref(linkBuilder.forOrders(uriInfo).getHref())
                         .build())
                 .build();
+    }
+
+    public Entity buildShoppingCartSelection(BookSelection selection, UriInfo uriInfo) {
+        return buildBookSelection(selection, uriInfo, true, false);
     }
 
     public Entity buildOrders(List<Order> orders, UriInfo uriInfo) {
@@ -93,7 +97,7 @@ public class EntityBuilder {
     }
 
     public Entity buildOrder(Order order, UriInfo uriInfo) {
-        final List<Entity> selections = order.getSelections().stream().map(s -> buildBookSelection(s, uriInfo, false)).collect(Collectors.toList());
+        final List<Entity> selections = order.getSelections().stream().map(s -> buildBookSelection(s, uriInfo, false, true)).collect(Collectors.toList());
 
         return createEntityBuilder().setComponentClass("order")
                 .addLink(linkBuilder.forOrder(order, uriInfo))
@@ -104,7 +108,7 @@ public class EntityBuilder {
                 .build();
     }
 
-    private Entity buildBookSelection(BookSelection selection, UriInfo uriInfo, boolean actionsIncluded) {
+    private Entity buildBookSelection(BookSelection selection, UriInfo uriInfo, boolean hypertextIncluded, boolean asSubEntity) {
         final Book book = selection.getBook();
         final Entity bookEntity = createEntityBuilder().setComponentClass("book")
                 .setRelationship("item")
@@ -115,12 +119,14 @@ public class EntityBuilder {
                 .build();
 
         final com.google.code.siren4j.component.builder.EntityBuilder selectionBuilder = createEntityBuilder().setComponentClass("book-selection")
-                .setRelationship("item")
                 .addProperty("quantity", selection.getQuantity())
                 .addProperty("price", selection.getPrice())
                 .addSubEntity(bookEntity);
 
-        if (actionsIncluded) {
+        if (asSubEntity)
+            selectionBuilder.setRelationship("item");
+
+        if (hypertextIncluded) {
             selectionBuilder.addAction(createActionBuilder().setName("modify-book-selection")
                     .setTitle("Modify book cart selection")
                     .setMethod(ActionImpl.Method.PUT)
@@ -133,9 +139,9 @@ public class EntityBuilder {
                     .setMethod(ActionImpl.Method.DELETE)
                     .setHref(linkBuilder.forBookSelection(selection, uriInfo).getHref())
                     .build());
+            selectionBuilder.addLink(linkBuilder.forBookSelection(selection, uriInfo));
         }
 
         return selectionBuilder.build();
     }
-
 }

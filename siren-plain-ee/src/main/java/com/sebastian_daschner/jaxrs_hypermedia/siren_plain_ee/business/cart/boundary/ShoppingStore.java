@@ -32,6 +32,10 @@ public class ShoppingStore {
         return cartSelection;
     }
 
+    public BookSelection getSelection(long selectionId) {
+        return shoppingCart.getSelection(selectionId);
+    }
+
     public void addBookSelection(BookSelection selection) {
         shoppingCart.addBookSelection(selection);
     }

@@ -81,9 +81,13 @@ public class EntityBuilder {
                         .setHref(linkBuilder.forOrders(uriInfo)))
                 .addLink(linkBuilder.forShoppingCart(uriInfo), "self");
 
-        cart.getSelections().stream().map(s -> buildBookSelection(s, uriInfo, true)).forEach(entityBuilder::addEntity);
+        cart.getSelections().stream().map(s -> buildBookSelection(s, uriInfo, true, true)).forEach(entityBuilder::addEntity);
 
         return entityBuilder.build();
+    }
+
+    public JsonObject buildShoppingCartSelection(BookSelection selection, UriInfo uriInfo) {
+        return buildBookSelection(selection, uriInfo, true, false);
     }
 
     public JsonObject buildOrders(List<Order> orders, UriInfo uriInfo) {
@@ -103,7 +107,7 @@ public class EntityBuilder {
     public JsonObject buildOrder(Order order, UriInfo uriInfo) {
         final com.sebastian_daschner.siren4javaee.EntityBuilder entityBuilder = createPreparedOrderBuilder(order, uriInfo).addClass("order");
 
-        order.getSelections().stream().map(s -> buildBookSelection(s, uriInfo, false)).forEach(entityBuilder::addEntity);
+        order.getSelections().stream().map(s -> buildBookSelection(s, uriInfo, false, true)).forEach(entityBuilder::addEntity);
 
         return entityBuilder.build();
     }
@@ -116,11 +120,10 @@ public class EntityBuilder {
                 .addLink(linkBuilder.forOrder(order, uriInfo), "self");
     }
 
-    private JsonObject buildBookSelection(BookSelection selection, UriInfo uriInfo, boolean actionsIncluded) {
+    private JsonObject buildBookSelection(BookSelection selection, UriInfo uriInfo, boolean hypertextIncluded, boolean asSubEntity) {
         final Book book = selection.getBook();
         final com.sebastian_daschner.siren4javaee.EntityBuilder entityBuilder = createEntityBuilder()
                 .addClass("book-selection")
-                .addSubEntityRel("item")
                 .addProperty("quantity", selection.getQuantity())
                 .addProperty("price", selection.getPrice())
                 .addEntity(createEntityBuilder()
@@ -131,7 +134,10 @@ public class EntityBuilder {
                         .addProperty("price", book.getPrice())
                         .addLink(linkBuilder.forBook(book, uriInfo), "self"));
 
-        if (actionsIncluded) {
+        if (asSubEntity)
+            entityBuilder.addSubEntityRel("item");
+
+        if (hypertextIncluded) {
             entityBuilder
                     .addAction(createActionBuilder()
                             .setName("modify-book-selection")
@@ -144,8 +150,10 @@ public class EntityBuilder {
                             .setName("delete-book-selection")
                             .setTitle("Delete book cart selection")
                             .setMethod(HttpMethod.DELETE)
-                            .setHref(linkBuilder.forBookSelection(selection, uriInfo)));
+                            .setHref(linkBuilder.forBookSelection(selection, uriInfo)))
+                    .addLink(linkBuilder.forBookSelection(selection, uriInfo), "self");
         }
+
         return entityBuilder.build();
     }
 

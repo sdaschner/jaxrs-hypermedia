@@ -3,7 +3,6 @@ package com.sebastian_daschner.jaxrs_hypermedia.siren_plain_ee.business.cart.con
 import com.sebastian_daschner.jaxrs_hypermedia.siren_plain_ee.business.books.control.PriceCalculator;
 import com.sebastian_daschner.jaxrs_hypermedia.siren_plain_ee.business.cart.entity.BookSelection;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -19,13 +18,8 @@ public class ShoppingCart {
     @Inject
     PriceCalculator priceCalculator;
 
-    private Set<BookSelection> selections;
+    private final Set<BookSelection> selections = new HashSet<>();
     private int nextSelectionId = 1;
-
-    @PostConstruct
-    public void initSelections() {
-        selections = new HashSet<>();
-    }
 
     @Lock(LockType.WRITE)
     public void addBookSelection(BookSelection selection) {
@@ -67,6 +61,13 @@ public class ShoppingCart {
     @Lock(LockType.READ)
     public Set<BookSelection> getSelections() {
         return Collections.unmodifiableSet(selections);
+    }
+
+    @Lock(LockType.READ)
+    public BookSelection getSelection(long selectionId) {
+        return selections.stream()
+                .filter(s -> s.getId() == selectionId).findAny()
+                .orElse(null);
     }
 
 }

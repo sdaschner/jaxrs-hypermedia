@@ -1,10 +1,10 @@
 package com.sebastian_daschner.jaxrs_hypermedia.siren_siren4j.business.cart.boundary;
 
 import com.google.code.siren4j.component.Entity;
+import com.sebastian_daschner.jaxrs_hypermedia.siren_siren4j.business.EntityBuilder;
 import com.sebastian_daschner.jaxrs_hypermedia.siren_siren4j.business.cart.entity.BookSelection;
 import com.sebastian_daschner.jaxrs_hypermedia.siren_siren4j.business.cart.entity.Selection;
 import com.sebastian_daschner.jaxrs_hypermedia.siren_siren4j.business.cart.entity.ShoppingCartSelection;
-import com.sebastian_daschner.jaxrs_hypermedia.siren_siren4j.business.EntityBuilder;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -38,6 +38,13 @@ public class CartResource {
     @POST
     public void addItem(@Valid @NotNull BookSelection selection) {
         shoppingStore.addBookSelection(selection);
+    }
+
+    @GET
+    @Path("{id}")
+    public Entity getSelection(@PathParam("id") long selectionId) {
+        final BookSelection selection = shoppingStore.getSelection(selectionId);
+        return entityBuilder.buildShoppingCartSelection(selection, uriInfo);
     }
 
     @PUT

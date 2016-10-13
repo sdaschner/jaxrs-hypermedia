@@ -40,4 +40,8 @@ public class ShoppingStore {
         shoppingCart.updateBookSelection(selectionId, quantity);
     }
 
+    public BookSelection getSelection(long selectionId) {
+        return shoppingCart.getSelection(selectionId);
+    }
+
 }

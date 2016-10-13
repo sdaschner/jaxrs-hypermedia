@@ -69,4 +69,9 @@ public class ShoppingCart {
         return Collections.unmodifiableSet(selections);
     }
 
+    @Lock(LockType.READ)
+    public BookSelection getSelection(final long selectionId) {
+        return selections.stream().filter(s -> s.getId() == selectionId).findFirst().orElse(null);
+    }
+
 }

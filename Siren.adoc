@@ -140,6 +140,9 @@ Examples to demonstrate possible responses which are followed in a self-explorat
                     "method": "DELETE",
                     "href": "http://api.jamazon.example.com/shopping_cart/123456"
                 }
+            ],
+            "links": [
+                { "rel": [ "self" ], "href": "http://api.jamazon.example.com/shopping_cart/123456" }
             ]
         },
         // other book selections on the shopping cart

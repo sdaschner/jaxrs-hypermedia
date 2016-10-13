@@ -40,6 +40,13 @@ public class CartResource {
         shoppingStore.addBookSelection(selection);
     }
 
+    @GET
+    @Path("{id}")
+    public JsonObject getSelection(@PathParam("id") long selectionId) {
+        final BookSelection selection = shoppingStore.getSelection(selectionId);
+        return entityBuilder.buildShoppingCartSelection(selection, uriInfo);
+    }
+
     @PUT
     @Path("{id}")
     public void updateSelection(@PathParam("id") long selectionId, @Valid @NotNull Selection selectionUpdate) {
